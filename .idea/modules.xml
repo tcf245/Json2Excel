@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Json2Excel.iml" filepath="$PROJECT_DIR$/.idea/modules/Json2Excel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Json2Excel_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Json2Excel_main.iml" group="Json2Excel" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Json2Excel_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Json2Excel_test.iml" group="Json2Excel" />
+    </modules>
+  </component>
+</project>
