@@ -3,17 +3,11 @@
  */
 package com.bfd.crawl.task;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
+import java.util.concurrent.*;
 
 
 public class PausableWorkerPool {
-    private int maxTasks = 400000;
+    private int maxTasks = 200000;
     private int keepAliveSeconds = 300;
     private int corePoolSize = 10;
     private int maxPoolSize = 64;
@@ -48,7 +42,7 @@ public class PausableWorkerPool {
                 maxPoolSize,
                 keepAliveSeconds,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue<Runnable>(maxTasks), // BlockingQueue
+                new LinkedBlockingQueue<Runnable>(maxTasks), // BlockingQueue
                 threadFactory,
                 rejectionHandler);
 
@@ -76,7 +70,11 @@ public class PausableWorkerPool {
 
     public void shutdown() {
         executorPool.shutdown();
-        
+        try {
+            executorPool.awaitTermination(10, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         // Thread.sleep(5000);
 
         monitor.shutdown(); 

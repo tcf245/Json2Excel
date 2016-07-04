@@ -30,7 +30,10 @@ public class SingletonPausableWorkerPool {
         }
     }
 
- 
+    public static BlockingQueue arrayQueue = new LinkedBlockingQueue(1000);
+    public static QueueBean queueBean = new QueueBean("part",arrayQueue);
+
+
     private SingletonPausableWorkerPool() {
         try {
             // TODO: load config here
@@ -51,7 +54,7 @@ public class SingletonPausableWorkerPool {
         return workerPool;
     }
 
-    
+
     public void startWorkerPool() {
         this.workerPool.startup();
     }
@@ -66,17 +69,30 @@ public class SingletonPausableWorkerPool {
         // when application begin:
         SingletonPausableWorkerPool.getInstance().startWorkerPool();
 
-        List<QueueBean> queueBeanList = getTask();
+//        List<QueueBean> queueBeanList = getTask();
 
         // do with tasks:
         PausableWorkerPool wp = SingletonPausableWorkerPool.getInstance().getWorkerPool();
         ThreadPoolExecutor executorPool = wp.getExecutorPool();
 
         // Submit tasks to the thread pool
-        for (int i = 0; i < queueBeanList.size(); i++) {
-            Thread  t =  new Thread(new SubmitThread(queueBeanList.get(i),executorPool));
-            t.start();
-        }
+//        for (int i = 0; i < queueBeanList.size(); i++) {
+//            Thread  t =  new Thread(new SubmitThread(queueBeanList.get(i),executorPool));
+//            t.start();
+//        }
+
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getTaskFromJson();
+            }
+        });
+        thread.start();
+
+        Thread  t =  new Thread(new SubmitThread(queueBean,executorPool));
+        t.start();
+
 
         Thread.sleep(30000);
 
@@ -124,6 +140,26 @@ public class SingletonPausableWorkerPool {
         return queueBeans;
     }
 
+    public static void getTaskFromJson(){
+        File jsonFile = new File(Constants.ORIGIN_FILE);
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(jsonFile))){
+
+            String temp = "";
+            int i = 1;
+
+
+            while(( temp = reader.readLine()) != null) {
+                arrayQueue.put(temp);
+            }
+            System.out.println("all json has add to queue" + arrayQueue.size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
 
@@ -131,6 +167,8 @@ public class SingletonPausableWorkerPool {
 class  SubmitThread  implements  Runnable{
 
     private QueueBean qb ;
+
+
     ThreadPoolExecutor  executorPool;
     public SubmitThread (QueueBean qb , ThreadPoolExecutor executorPool) {
         this.qb = qb;
@@ -138,7 +176,7 @@ class  SubmitThread  implements  Runnable{
     }
     @Override
     public void run() {
-        int numTasks =  qb.getQueue().size();
+        int numTasks =  Constants.ROW_NUMBER;
         for(int i = 0; i < numTasks; i++) {
             Future<Integer> future = executorPool.submit(new CallableTask(qb));
 

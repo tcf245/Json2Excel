@@ -27,7 +27,7 @@ public class ExcelInsert {
             // 创建一行
             HSSFRow row = sheet.createRow(sheet.getLastRowNum() + 1);
                 row.setHeight((short)1000);
-                row.setRowStyle(HssfHelp.creatStyle(hwb));
+//                row.setRowStyle(HssfHelp.creatStyle(hwb));
             // 得到要插入的每一条记录
                 HSSFCell name = row.createCell(0);
 
@@ -61,6 +61,6 @@ public class ExcelInsert {
         OutputStream out = new FileOutputStream(targetFile);
         hwb.write(out);
         out.close();
-        System.out.println("数据导出成功");
+        System.out.println("数据导出成功" + targetFile);
     }
 }
