@@ -22,8 +22,8 @@ public class TaskUtils {
      * 读取json文件  将任务放到队列中
      * @return
      */
-    public static List<QueueBean> getTask() {
-        File jsonFile = new File(Constants.ORIGIN_FILE);
+    public static List<QueueBean> getTask(String  filePath,int rowNum) {
+        File jsonFile = new File(filePath);
 
         try (BufferedReader reader = new BufferedReader(new FileReader(jsonFile))){
 
@@ -33,7 +33,7 @@ public class TaskUtils {
             QueueBean queueBean = new QueueBean("part" + i,queue);
 
             while(( temp = reader.readLine()) != null){
-                if(queue.size() >= Constants.ROW_NUMBER){
+                if(queue.size() >= rowNum){
                     queueBean.setQueue(queue);
                     queueBeans.add(queueBean);
                     queue = new LinkedBlockingQueue();
@@ -41,7 +41,6 @@ public class TaskUtils {
                     queueBean = new QueueBean("part" + i,queue);
                 }
                 queue.add(temp);
-                System.out.println(queue.size());
             }
             if(queue.size() > 0){
                 queueBean.setQueue(queue);

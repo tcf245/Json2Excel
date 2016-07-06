@@ -1,16 +1,81 @@
 package com.bfd.crawl;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
+import java.util.Map;
+
 
 /**
  * Created by tcf24 on 2016/7/2.
  */
 public class ImgUtils {
+
+//    /**
+//     * get 请求示例代码
+//     * @param url
+//     * @param charset
+//     * @param headers
+//     * @return
+//     * @throws Exception
+//     */
+//    public static byte[] httpGet(String url, String charset, Map<String,String> headers, String ip) throws Exception {
+//        HttpClientBuilder httpBuilder = HttpClientBuilder.create();
+//        httpBuilder.setUserAgent(ua);
+//
+//        HttpClient client = httpBuilder.build();
+//        HttpGet httpget = new HttpGet(url);
+//
+//        if (null != ip && !"".equals(ip.trim())) {
+//            RequestConfig requestConfig = getRequestConfigByIp(ip);
+//            if (null != requestConfig) {
+//                httpget.setConfig(requestConfig);
+//            }
+//        }
+//
+//        if (headers != null && headers.size() > 0) {
+//            for (String key : headers.keySet()) {
+//                httpget.setHeader(key, headers.get(key));
+//            }
+//        }
+//        HttpResponse response = client.execute(httpget);
+//        HttpEntity en = response.getEntity();
+//        byte[] b = EntityUtils.toByteArray(en);
+//        return b;
+//    }
+//
+//    /**
+//     *  指定ip
+//     * @param ip
+//     * @return
+//     */
+//    public static RequestConfig getRequestConfigByIp(String ip) {
+//
+//        RequestConfig requestConfig = null;
+//        try {
+//            RequestConfig.Builder config_builder = RequestConfig.custom();
+//            InetAddress inetAddress = null;
+//            inetAddress = InetAddress.getByName(ip);
+//            config_builder.setLocalAddress(inetAddress);
+//            requestConfig = config_builder.build();
+//        } catch (UnknownHostException e) {
+//            e.printStackTrace();
+//        }
+//        return requestConfig;
+//    }
 
     public static byte[] mReaderPicture(String filePath) {
         byte[] arr = null;
