@@ -35,9 +35,10 @@ public class ThreadTask implements Runnable {
                 String imgPath = (String) data.get("large_img");
 
                 String ip = ipList[(int) Math.floor(Math.random() * ipList.length)];
-                System.out.println("get ip is :" + ip);
+                System.out.println(queue.size() + " get ip is :" + ip);
 
                 byte[] byteArray = JavaHttpDemo.httpGet(imgPath,"utf-8",headers,ip);
+                System.out.println(queue.size() + " img.. waiting for write ..");
 
                 ExcelInsert.insertRow2Excel(data, queueBean ,byteArray);
             }

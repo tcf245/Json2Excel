@@ -2,9 +2,13 @@ package com.bfd.crawl;
 
 import com.bfd.crawl.module.QueueBean;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+
 import java.io.*;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -18,65 +22,72 @@ public class ExcelInsert {
      * @throws Exception
      *             在导入Excel的过程中抛出异常
      */
-    public synchronized static void insertRow2Excel(Map<String,Object> xlsRow, QueueBean queueBean,byte[] byteArray) throws Exception {
+    public static void insertRow2Excel(Map<String,Object> xlsRow, QueueBean queueBean,byte[] byteArray) throws Exception {
 
-        HSSFWorkbook hwb = queueBean.getHwb();
-        HSSFSheet sheet = queueBean.getSheet();
-        HSSFPatriarch patriarch= queueBean.getPatriarch();
-        String targetFile = "etc/" + queueBean.getName() + ".xls";
+        Workbook hwb = queueBean.getHwb();
+        SXSSFSheet sheet = queueBean.getSheet();
+        Drawing patriarch= queueBean.getPatriarch();
+        String targetFile = "etc/" + queueBean.getName() + ".xlsx";
 
         try {
+
+            String[] titles = {"名称","url","图片","图片url","市场价","促销价","促销信息","销售渠道","货号","材料","积分","月销量","评价数量","品牌"};
+            if(sheet.getLastRowNum() == 0){
+                SXSSFRow firstRow = sheet.createRow(0);
+                for (int i = 0; i < titles.length; i++) {
+                    SXSSFCell cell = firstRow.createCell(i);
+                    cell.setCellValue(titles[i]);
+                }
+            }
             // 创建一行
-            HSSFRow row = sheet.createRow(sheet.getLastRowNum() + 1);
+            SXSSFRow row = sheet.createRow(sheet.getLastRowNum() + 1);
             row.setHeight((short) 1000);
 //                row.setRowStyle(HssfHelp.creatStyle(hwb));
             // 得到要插入的每一条记录
-            HSSFCell name = row.createCell(0);
+            SXSSFCell name = row.createCell(0);
             name.setCellValue((String) xlsRow.get("itemname"));
             System.out.println((String) xlsRow.get("itemname"));
-            HSSFCell url = row.createCell(1);
+            SXSSFCell url = row.createCell(1);
             url.setCellValue((String) xlsRow.get("url"));
 
-            HSSFCell img = row.createCell(2);
+            SXSSFCell img = row.createCell(2);
             String imgPath = (String) xlsRow.get("large_img");
             sheet.setColumnWidth(2,10 * 256);
 
             //anchor主要用于设置图片的属性
-            HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 100, 40, (short) 2, row.getRowNum(), (short) 3, row.getRowNum() + 1);
+            XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 100, 40, (short) 2, row.getRowNum(), (short) 3, row.getRowNum() + 1);
             anchor.setAnchorType(ClientAnchor.AnchorType.DONT_MOVE_AND_RESIZE);
             //插入图片
             patriarch.createPicture(anchor, hwb.addPicture(byteArray, HSSFWorkbook.PICTURE_TYPE_JPEG));
 
-            HSSFCell imgUrl = row.createCell(3);
+            SXSSFCell imgUrl = row.createCell(3);
             imgUrl.setCellValue((String) xlsRow.get("large_img"));
-            HSSFCell price = row.createCell(4);
+            SXSSFCell price = row.createCell(4);
             price.setCellValue((String) xlsRow.get("normalprice"));
-            HSSFCell promotionprice = row.createCell(5);
+            SXSSFCell promotionprice = row.createCell(5);
             promotionprice.setCellValue((String) xlsRow.get("promotionprice"));
-            HSSFCell promotionMess = row.createCell(6);
+            SXSSFCell promotionMess = row.createCell(6);
             promotionMess.setCellValue((String) xlsRow.get("promotionMess"));
-            HSSFCell qudao = row.createCell(7);
+            SXSSFCell qudao = row.createCell(7);
             qudao.setCellValue((String) xlsRow.get("tianmaoxiaoshouqudao"));
-            HSSFCell huohao = row.createCell(8);
+            SXSSFCell huohao = row.createCell(8);
             huohao.setCellValue((String) xlsRow.get("tianmaohuohao"));
-            HSSFCell cailiao = row.createCell(9);
+            SXSSFCell cailiao = row.createCell(9);
             cailiao.setCellValue((String) xlsRow.get("tianmaoxiaocailiao"));
-            HSSFCell jifen = row.createCell(10);
+            SXSSFCell jifen = row.createCell(10);
             jifen.setCellValue((String) xlsRow.get("tianmaojifen"));
-            HSSFCell xiaoliang = row.createCell(11);
+            SXSSFCell xiaoliang = row.createCell(11);
             Object cellCount = xlsRow.get("sellCount");
             if(cellCount != null){
                 xiaoliang.setCellValue((int)cellCount);
             }
-            HSSFCell pingjia = row.createCell(12);
+            SXSSFCell pingjia = row.createCell(12);
             Object rateTotal = xlsRow.get("rateTotal");
             if(rateTotal != null){
                 pingjia.setCellValue((int)rateTotal);
             }
-            HSSFCell pinpai = row.createCell(13);
+            SXSSFCell pinpai = row.createCell(13);
             pinpai.setCellValue((String) xlsRow.get("tianmaopinpai"));
-
-
 
             // 创建文件输出流，准备输出电子表格
             OutputStream out = new FileOutputStream(targetFile);

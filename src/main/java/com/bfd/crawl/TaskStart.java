@@ -25,10 +25,10 @@ public class TaskStart {
 
         List<QueueBean> queueBeanList = TaskUtils.getTask((String)pro.get("jsonFile"),rowNum);
         for(QueueBean qb : queueBeanList){
-            for (int i = 0; i < threadNum; i++) {
+
                 Thread t = new Thread(new ThreadTask(qb,ips));
                 t.start();
-            }
+
         }
     }
 

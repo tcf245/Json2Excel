@@ -1,9 +1,9 @@
 package com.bfd.crawl.module;
 
 import com.bfd.crawl.HssfHelp;
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -15,11 +15,11 @@ public class QueueBean {
     private String name;
     private BlockingQueue queue;
     // 创建Excel文档
-    private  HSSFWorkbook hwb = new HSSFWorkbook();
+    private SXSSFWorkbook hwb = new SXSSFWorkbook();
     // sheet 对应一个工作页
-    private  HSSFSheet sheet = hwb.createSheet("商品基本信息");
+    private SXSSFSheet sheet = hwb.createSheet("商品基本信息");
     //画图的顶级管理器，一个sheet只能获取一个（一定要注意这点）
-    private  HSSFPatriarch patriarch = HssfHelp.creatHSSFPatriarch(sheet);
+    private Drawing patriarch = HssfHelp.creatHSSFPatriarch(sheet);
 
     public QueueBean() {
     }
@@ -45,27 +45,27 @@ public class QueueBean {
         this.queue = queue;
     }
 
-    public HSSFWorkbook getHwb() {
+    public SXSSFWorkbook getHwb() {
         return hwb;
     }
 
-    public void setHwb(HSSFWorkbook hwb) {
+    public void setHwb(SXSSFWorkbook hwb) {
         this.hwb = hwb;
     }
 
-    public HSSFSheet getSheet() {
+    public SXSSFSheet getSheet() {
         return sheet;
     }
 
-    public void setSheet(HSSFSheet sheet) {
+    public void setSheet(SXSSFSheet sheet) {
         this.sheet = sheet;
     }
 
-    public HSSFPatriarch getPatriarch() {
+    public Drawing getPatriarch() {
         return patriarch;
     }
 
-    public void setPatriarch(HSSFPatriarch patriarch) {
+    public void setPatriarch(Drawing patriarch) {
         this.patriarch = patriarch;
     }
 }
