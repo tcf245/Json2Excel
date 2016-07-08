@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
  * Created by tcf24 on 2016/7/3.
@@ -17,10 +18,11 @@ public class HssfHelp {
 
     /**
      * 设置单元格样式
+     *
      * @param book
      * @return
      */
-    public  static  CellStyle  creatStyle(Workbook book){
+    public static CellStyle creatStyle(Workbook book) {
         CellStyle setBorder = book.createCellStyle();
         setBorder.setBorderBottom(HSSFCellStyle.BORDER_NONE); //下边框
         setBorder.setBorderLeft(HSSFCellStyle.BORDER_NONE);//左边框
@@ -30,8 +32,7 @@ public class HssfHelp {
         return setBorder;
     }
 
-public static Drawing creatHSSFPatriarch (SXSSFSheet sheet){
-    return sheet.createDrawingPatriarch();
-
-}
+    public static Drawing creatHSSFPatriarch(SXSSFSheet sheet) {
+        return sheet.createDrawingPatriarch();
+    }
 }

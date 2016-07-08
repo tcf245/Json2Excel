@@ -1,12 +1,15 @@
 package com.bfd.crawl;
 
 import com.bfd.crawl.module.QueueBean;
+import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import java.io.*;
 import java.util.Map;
@@ -22,9 +25,12 @@ public class ExcelInsert {
      * @throws Exception
      *             在导入Excel的过程中抛出异常
      */
-    public static void insertRow2Excel(Map<String,Object> xlsRow, QueueBean queueBean,byte[] byteArray) throws Exception {
+    public synchronized static void insertRow2Excel(Map<String,Object> xlsRow, QueueBean queueBean,byte[] byteArray) throws Exception {
 
-        Workbook hwb = queueBean.getHwb();
+//        Workbook hwb = queueBean.getHwb();
+        Workbook hwb = new SXSSFWorkbook(10);
+
+        int lastRowNum = queueBean.getLastRowNum();
         SXSSFSheet sheet = queueBean.getSheet();
         Drawing patriarch= queueBean.getPatriarch();
         String targetFile = "etc/" + queueBean.getName() + ".xlsx";
@@ -32,17 +38,20 @@ public class ExcelInsert {
         try {
 
             String[] titles = {"名称","url","图片","图片url","市场价","促销价","促销信息","销售渠道","货号","材料","积分","月销量","评价数量","品牌"};
-            if(sheet.getLastRowNum() == 0){
+            if(lastRowNum == 1){
                 SXSSFRow firstRow = sheet.createRow(0);
+                lastRowNum ++;
+                queueBean.setLastRowNum(lastRowNum);
                 for (int i = 0; i < titles.length; i++) {
                     SXSSFCell cell = firstRow.createCell(i);
                     cell.setCellValue(titles[i]);
                 }
             }
             // 创建一行
-            SXSSFRow row = sheet.createRow(sheet.getLastRowNum() + 1);
+            SXSSFRow row = sheet.createRow(lastRowNum);
+            lastRowNum ++;
+            queueBean.setLastRowNum(lastRowNum);
             row.setHeight((short) 1000);
-//                row.setRowStyle(HssfHelp.creatStyle(hwb));
             // 得到要插入的每一条记录
             SXSSFCell name = row.createCell(0);
             name.setCellValue((String) xlsRow.get("itemname"));
@@ -55,8 +64,8 @@ public class ExcelInsert {
             sheet.setColumnWidth(2,10 * 256);
 
             //anchor主要用于设置图片的属性
-            XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 100, 40, (short) 2, row.getRowNum(), (short) 3, row.getRowNum() + 1);
-            anchor.setAnchorType(ClientAnchor.AnchorType.DONT_MOVE_AND_RESIZE);
+            XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 430, 430, (short) 2, row.getRowNum(), (short) 3, row.getRowNum() +1);
+            anchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);
             //插入图片
             patriarch.createPicture(anchor, hwb.addPicture(byteArray, HSSFWorkbook.PICTURE_TYPE_JPEG));
 
@@ -90,9 +99,10 @@ public class ExcelInsert {
             pinpai.setCellValue((String) xlsRow.get("tianmaopinpai"));
 
             // 创建文件输出流，准备输出电子表格
-            OutputStream out = new FileOutputStream(targetFile);
+            OutputStream out = new FileOutputStream(targetFile,true);
             hwb.write(out);
             out.close();
+
             System.out.println("数据导出成功" + targetFile);
         }catch(Exception e){
             e.printStackTrace();
