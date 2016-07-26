@@ -4,12 +4,8 @@ import com.bfd.crawl.HssfHelp;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -22,13 +18,29 @@ public class QueueBean {
     private String name;
     private BlockingQueue queue;
     // 创建Excel文档
-    private SXSSFWorkbook hwb = new SXSSFWorkbook(1000);
+    private SXSSFWorkbook hwb = new SXSSFWorkbook();
     // sheet 对应一个工作页
     private SXSSFSheet sheet = hwb.createSheet("商品基本信息");
     //画图的顶级管理器，一个sheet只能获取一个（一定要注意这点）
     private Drawing patriarch = HssfHelp.creatHSSFPatriarch(sheet);
 
     public QueueBean() throws FileNotFoundException {
+    }
+
+    public SXSSFWorkbook getHwb() {
+        return hwb;
+    }
+
+    public void setHwb(SXSSFWorkbook hwb) {
+        this.hwb = hwb;
+    }
+
+    public SXSSFSheet getSheet() {
+        return sheet;
+    }
+
+    public void setSheet(SXSSFSheet sheet) {
+        this.sheet = sheet;
     }
 
     public QueueBean(String name, BlockingQueue queue) throws FileNotFoundException {
@@ -50,22 +62,6 @@ public class QueueBean {
 
     public void setQueue(BlockingQueue queue) {
         this.queue = queue;
-    }
-
-    public SXSSFWorkbook getHwb() {
-        return hwb;
-    }
-
-    public void setHwb(SXSSFWorkbook hwb) {
-        this.hwb = hwb;
-    }
-
-    public SXSSFSheet getSheet() {
-        return sheet;
-    }
-
-    public void setSheet(SXSSFSheet sheet) {
-        this.sheet = sheet;
     }
 
     public Drawing getPatriarch() {

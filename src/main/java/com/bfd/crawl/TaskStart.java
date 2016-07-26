@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by BFD_303 on 2016/7/4.
@@ -23,12 +25,12 @@ public class TaskStart {
         int threadNum = Integer.parseInt(pro.get("threadNum").toString());
         int rowNum = Integer.parseInt(pro.get("rowNum").toString());
 
-        List<QueueBean> queueBeanList = TaskUtils.getTask((String)pro.get("jsonFile"),rowNum);
+        List<QueueBean> queueBeanList = TaskUtils.getTaskByBrand((String)pro.get("jsonDir"));
+        System.out.println("get queue list size is :" + queueBeanList.size());
+
         for(QueueBean qb : queueBeanList){
-
-                Thread t = new Thread(new ThreadTask(qb,ips));
-                t.start();
-
+            Thread t = new Thread(new ThreadTask(qb,ips));
+            t.start();
         }
     }
 
