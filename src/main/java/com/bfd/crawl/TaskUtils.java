@@ -34,8 +34,6 @@ public class TaskUtils {
 
             for (String s : jsonList){}
 
-
-
 //            String temp = "";
 //            int i = 1;
 //
@@ -79,7 +77,7 @@ public class TaskUtils {
                     for(String s : jsonList){
                         queue.put(s);
                     }
-                    queueBean = new QueueBean(f.getName(), queue);
+                    queueBean = new QueueBean(f.getName().replace(".txt",""), queue);
                     queueBeans.add(queueBean);
                     System.out.println(f.getName() + " has add to queue , and queue size is :" + queue.size());
                     queue = new LinkedBlockingQueue();
