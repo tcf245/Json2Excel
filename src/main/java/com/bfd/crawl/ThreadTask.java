@@ -100,7 +100,7 @@ public class ThreadTask implements Runnable {
         try {
             byteArray = JavaHttpDemo.httpGet(imgPath, "utf-8", headers, ip);
         }catch(Exception e){
-            FileUtils.write(new File("etc/failedTask.txt"),queueBean.getName() + " " +imgPath,"utf-8",true);
+            FileUtils.write(new File("etc/failedTask.txt"),queueBean.getName() + " " + imgPath + "\n","utf-8",true);
         }
 
         System.out.println("current row num is :" + lastRowNum);

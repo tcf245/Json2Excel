@@ -6,7 +6,7 @@
         <option name="createEmptyContentRootDirectories" value="true" />
         <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="D:/Tools/gradle-2.6" />
+        <option name="gradleHome" value="E:/Program Files/gradle-2.12" />
         <option name="gradleJvm" value="1.7" />
         <option name="modules">
           <set>
