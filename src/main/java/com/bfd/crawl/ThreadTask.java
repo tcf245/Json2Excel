@@ -3,6 +3,8 @@ package com.bfd.crawl;
 import com.bfd.crawl.module.QueueBean;
 import com.bfd.crawler.utils.JsonUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
@@ -16,6 +18,7 @@ import java.util.concurrent.BlockingQueue;
  * Created by BFD_303 on 2016/7/4.
  */
 public class ThreadTask implements Runnable {
+    private static final Log LOG = LogFactory.getLog(ThreadTask.class);
 
     private QueueBean queueBean;
     private String[] ipList;
@@ -40,7 +43,8 @@ public class ThreadTask implements Runnable {
 
             int rowNum = queue.size();
             for (int i = 0; i < rowNum; i++) {
-                System.out.println(queueBean.getName() + "queue size is :" + queue.size());
+//                System.out.println(queueBean.getName() + "queue size is :" + queue.size());
+                LOG.info(queueBean.getName() + "queue size is :" + queue.size());
                 String jsonString = (String) queue.take();
                 insertRow2Excel(queueBean,jsonString,ipList,xwb,sheet,patriarch);
 
@@ -54,14 +58,16 @@ public class ThreadTask implements Runnable {
 //                }
             }
             // 创建文件输出流，准备输出电子表格
-            OutputStream out = new FileOutputStream("etc/" + queueBean.getName() + ".xlsx",true);
+            OutputStream out = new FileOutputStream(TaskStart.target + "/" + queueBean.getName() + ".xlsx",true);
             xwb.write(out);
             out.close();
 
-            System.out.println(queueBean.getName() + " OK!");
+            TaskStart.threadNum--;
+            LOG.info(queueBean.getName() + "  OK!  and current threadNum is : " + TaskStart.threadNum);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println(queueBean.getName() + "Exception!");
+            TaskStart.threadNum--;
+            LOG.error(queueBean.getName() + "Exception!");
         }
     }
 
@@ -72,7 +78,8 @@ public class ThreadTask implements Runnable {
         xwb = new SXSSFWorkbook(100);
         sheet = xwb.createSheet("商品基本信息");
         lastRowNum = sheet.getLastRowNum();
-        System.out.println("get last row num is " + lastRowNum);
+//        System.out.println("get last row num is " + lastRowNum);
+        LOG.info("get last row num is " + lastRowNum);
         patriarch = sheet.createDrawingPatriarch();
     }
 
@@ -100,10 +107,12 @@ public class ThreadTask implements Runnable {
         try {
             byteArray = JavaHttpDemo.httpGet(imgPath, "utf-8", headers, ip);
         }catch(Exception e){
-            FileUtils.write(new File("etc/failedTask.txt"),queueBean.getName() + " " +imgPath,"utf-8",true);
+            LOG.error("get image error.. url is : " + imgPath);
+            FileUtils.write(new File("log/failedTask.txt"),jsonString + "\n","utf-8",true);
         }
 
-        System.out.println("current row num is :" + lastRowNum);
+//        System.out.println("current row num is :" + lastRowNum);
+        LOG.info("current row num is :" + lastRowNum);
         try {
             String[] titles = {"名称","url","图片","图片url","市场价","促销价","促销信息","销售渠道","货号","材料","积分","月销量","评价数量","品牌"};
             String[] items = {"itemname","url","large_img","large_img","normalprice","promotionprice","promotionMess","tianmaoxiaoshouqudao","tianmaohuohao","tianmaoxiaocailiao",
